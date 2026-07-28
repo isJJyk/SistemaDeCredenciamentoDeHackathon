@@ -1,4 +1,4 @@
-package sistemaDeCredenciamentoDeHackathon.entidades;
+package br.com.senaimg.portal_hackathon.entidades;
 
 public final class Designer extends Participante {
     String ferramentaVisual;

@@ -1,4 +1,4 @@
-package sistemaDeCredenciamentoDeHackathon.entidades;
+package br.com.senaimg.portal_hackathon.entidades;
 
 public final class Desenvolvedor extends Participante {
     String linguagemFavorita;

@@ -1,7 +1,4 @@
-package sistemaDeCredenciamentoDeHackathon.entidades;
-
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+package br.com.senaimg.portal_hackathon.entidades;
 
 public abstract class Participante {
 
@@ -15,6 +12,8 @@ public abstract class Participante {
         this.matricula = matricula;
     }
 
+    public Participante() {
+    }
 
     public String getNome() {
         return nome;

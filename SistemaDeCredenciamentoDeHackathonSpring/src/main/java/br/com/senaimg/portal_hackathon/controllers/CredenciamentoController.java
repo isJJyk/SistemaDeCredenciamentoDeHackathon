@@ -1,32 +1,39 @@
-package sistemaDeCredenciamentoDeHackathon.project;
+package br.com.senaimg.portal_hackathon.controllers;
 
-import sistemaDeCredenciamentoDeHackathon.entidades.Desenvolvedor;
-import sistemaDeCredenciamentoDeHackathon.entidades.Designer;
-import sistemaDeCredenciamentoDeHackathon.entidades.Participante;
+import br.com.senaimg.portal_hackathon.entidades.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.List;
 
-public class Project {
-    static void main(String[] args) {
+@RestController
+public class CredenciamentoController {
+    @PostMapping("/hackathon/processar")
+    public List<Participante> processos() {
 
-        String inscrito = "C:\\Users\\Aluno_Tarde\\inscrição\\inscri.txt";
+
+        String inscrito = "C:\\inscricao\\inscri.txt";
+
+
         ArrayList<Participante> participantes = new ArrayList<>();
-        ArrayList<String> erro= new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(inscrito))){
+        ArrayList<String> erro = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(inscrito))) {
 
             String line;
             while ((line = br.readLine()) != null) {
-                String[] vectin= null;
+
+                String[] vectin = null;
 
                 Integer idade = null;
                 vectin = line.split(";");
 
                 try {
-                    idade= Integer.parseInt(vectin[2]);
+
+                    idade = Integer.parseInt(vectin[2]);
 
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                     erro.add(line);
@@ -41,23 +48,19 @@ public class Project {
 
                         Designer designer = new Designer(vectin[1], idade, vectin[3], vectin[4]);
                         participantes.add(designer);
-                    }
-                    else {
+                    } else {
                         erro.add(line);
                     }
                 } catch (Exception e) {
                     erro.add(line);
                 }
             }
-        }catch (IOException e){
-            System.out.println("Error: "+ e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
         }
 
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Digite o caminho dos arquivos: ");
-        String path = sc.nextLine();
-        String pathDev = path + "\\aprovados_hackathon.txt";
-        String pathErro = path + "\\pendencias_inscricao.txt";
+        String pathDev = "C:\\relatorios\\aprovados_hackathon.txt";
+        String pathErro = "C:\\relatorios\\pendencias_inscricao.txt";
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(pathDev))) {
             for (Participante line : participantes) {
@@ -77,5 +80,29 @@ public class Project {
         } catch (IOException e) {
             System.out.println("Erro ao criar o arquivo.");
         }
+
+        int quantAprovados = participantes.size();
+        int quantRejeitados = erro.size();
+
+
+        String status;
+        if (quantAprovados > 0 && quantRejeitados == 0) {
+            status = "Todos Aprovados";
+        } else if (quantAprovados > 0 && quantRejeitados > 0) {
+            status = "Pendências";
+        } else if (quantAprovados == 0 && quantRejeitados > 0) {
+            status = "Todos Rejeitados";
+        } else {
+            status = "Nenhum Arquivo Encontrado";
+        }
+
+
+        RelatorioProcessamento relatorio = new RelatorioProcessamento(quantAprovados,quantRejeitados,status);
+        participantes.add(relatorio);
+
+        //Dúvida: Fazer List<Participante> Retornar dados do objeto RelatorioProcessamento
+
+        return participantes;
+
     }
 }
